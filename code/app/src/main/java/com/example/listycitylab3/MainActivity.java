@@ -19,16 +19,17 @@ public class MainActivity extends AppCompatActivity implements AddCityFragment.A
 
     @Override
     public void addCity(City city) {
-        cityAdapter.add(city);
-        cityAdapter.notifyDataSetChanged();
+        cityAdapter.add(city);  // Adds the city to the dataList being run in cityAdapter
+        cityAdapter.notifyDataSetChanged();  // Redraws the ListView to incorporate this change
     }
 
     @Override
     public void editCity(City oldCity, City newCity) {
         int index = dataList.indexOf(oldCity);
         if (index != -1) {
+            // Replace the old city object (at `index`) with the new city object
             dataList.set(index, newCity);
-            cityAdapter.notifyDataSetChanged();
+            cityAdapter.notifyDataSetChanged();  // Redraws the ListView to incorporate this change
         }
     }
 
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements AddCityFragment.A
         String[] cities = { "Edmonton", "Vancouver", "Toronto" };
         String[] provinces = { "AB", "BC", "ON" };
 
+        // Fill the dataList with the initial values
         dataList = new ArrayList<City>();
         for (int i = 0; i < cities.length; i++) {
             dataList.add(new City(cities[i], provinces[i]));
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements AddCityFragment.A
             new AddCityFragment().show(getSupportFragmentManager(), "Add City");
         });
 
+        // Listen for clicks on the ListView
         cityList.setOnItemClickListener((parent, view, position, id) -> {
             City existingCity = dataList.get(position);
             // Launch the dialog pre-filled with the selected city

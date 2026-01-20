@@ -12,14 +12,25 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+/*
+* Fragments are reusable pieces of UI that can be attached to activities.
+* DialogFragments display dialog boxes. AddCityFragment is a customizable dialog box.
+*/
 public class AddCityFragment extends DialogFragment {
+
+    // Only the listener class needs to implement the methods to this internal interface (i.e. MainActivity).
     interface AddCityDialogListener {
         void addCity(City city);
-        void editCity(City oldCity, City newCity);  // FIXME
+        void editCity(City oldCity, City newCity);
     }
 
     private AddCityDialogListener listener;
 
+    /*
+    * A lifecycle method called when the fragment is attached to an activity. 'Context' is the
+    * activity that hosts the fragment. If the activity implements AddCityDialogListener, this
+    * fragment saves it in listener.
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -31,34 +42,20 @@ public class AddCityFragment extends DialogFragment {
         }
     }
 
-//    @NonNull
-//    @Override
-//    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-//        View view =
-//                LayoutInflater.from(getContext()).inflate(R.layout.fragment_add_city, null);
-//        EditText editCityName = view.findViewById(R.id.edit_text_city_text);
-//        EditText editProvinceName = view.findViewById(R.id.edit_text_province_text);
-//        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-//        return builder
-//                .setView(view)
-//                .setTitle("Add a city")
-//                .setNegativeButton("Cancel", null)
-//                .setPositiveButton("Add", (dialog, which) -> {
-//                    String cityName = editCityName.getText().toString();
-//                    String provinceName = editProvinceName.getText().toString();
-//                    listener.addCity(new City(cityName, provinceName));
-//                })
-//                .create();
-//    }
-
+    /*
+    * This is a lifecycle method of DialogFragment. Called by Android when the fragment wants to
+    * create a dialog.
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        // Turns the XML layout fragment_add_city into an actual view object
         View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_add_city, null);
+        // Stores the edit text into this new view object
         EditText editCityName = view.findViewById(R.id.edit_text_city_text);
         EditText editProvinceName = view.findViewById(R.id.edit_text_province_text);
 
-        // Check if a city was passed in (for editing)
+        // Check if we are editing an existing city, or adding a city
         final City cityToEdit = getArguments() != null ? (City) getArguments().getSerializable("city") : null;
         Bundle args = getArguments();
 
@@ -68,11 +65,15 @@ public class AddCityFragment extends DialogFragment {
             editProvinceName.setText(cityToEdit.getProvince());
         }
 
+        // Build the dialog box
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         return builder
                 .setView(view)
-                .setTitle(cityToEdit == null ? "Add a city" : "Edit city") // dynamic title
+                // Change the (+) button text based on if we are adding or editing a city
+                .setTitle(cityToEdit == null ? "Add a city" : "Edit city")
+                // The (-) button will just be to exit the dialog box
                 .setNegativeButton("Cancel", null)
+                // If there is not city to edit, we are adding a city. O.w. we are saving to an existing city.
                 .setPositiveButton(cityToEdit == null ? "Add" : "Save", (dialog, which) -> {
                     String cityName = editCityName.getText().toString();
                     String provinceName = editProvinceName.getText().toString();
@@ -87,7 +88,7 @@ public class AddCityFragment extends DialogFragment {
                 .create();
     }
 
-    // This method is called on the class itself
+    // This method is called on the class itself and preloads a newly creating class with a city.
     static AddCityFragment newInstance(City city) {
         Bundle args = new Bundle();
         // Stores city under the key 'city' (works because the city class implements Serializable)
